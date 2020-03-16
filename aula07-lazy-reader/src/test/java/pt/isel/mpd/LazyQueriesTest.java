@@ -10,18 +10,11 @@ import pt.isel.mpd.weather.WeatherInfo;
 import pt.isel.mpd.weather.WeatherWebApi;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static pt.isel.mpd.util.LazyQueries.filter;
-import static pt.isel.mpd.util.LazyQueries.generate;
-import static pt.isel.mpd.util.LazyQueries.limit;
-import static pt.isel.mpd.util.LazyQueries.map;
-import static pt.isel.mpd.util.LazyQueries.max;
+import static pt.isel.mpd.util.LazyQueries.*;
 
 public class LazyQueriesTest {
     final Iterable<WeatherInfo> jan;
@@ -69,6 +62,42 @@ public class LazyQueriesTest {
         while(actual.hasNext()) {
             Integer curr = actual.next();
             assertEquals(expected.next(), curr);
+        }
+        assertFalse(expected.hasNext());
+    }
+
+    @Test public void testDistinctValues(){
+        Iterable<Integer> numbers = Arrays.asList(1, 2, 2, 4, 4, 6, 6,0,0,1,2,3,4,5);
+        Iterator<Integer> expected = Arrays.asList(1, 2, 4,6,0,3,5).iterator();
+        Iterator<Integer> actual = distinct(numbers).iterator();
+        while(actual.hasNext()) {
+            Integer curr = actual.next();
+            assertEquals(expected.next(), curr);
+        }
+        assertFalse(expected.hasNext());
+    }
+
+    @Test public void testConcatValues(){
+        Iterable<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);
+        Iterable<Integer> numbersToConcat = Arrays.asList(6,7,8,9);
+        Iterator<Integer> expected = Arrays.asList(1, 2,3,4,5,6,7,8,9).iterator();
+        Iterator<Integer> actual = concat(numbers, numbersToConcat).iterator();
+        while(actual.hasNext()) {
+            Integer curr = actual.next();
+            assertEquals(expected.next(), curr);
+        }
+        assertFalse(expected.hasNext());
+    }
+
+    @Test public void testInterleaveValues(){
+        Iterable<Integer> numbers = Arrays.asList(1, 3, 5, 7, 9);
+        Iterable<Integer> numbersToInterleave = Arrays.asList(2,4,6,8,9,9);
+        Iterator<Integer> expected = Arrays.asList(1,2,3,4,5,6,7,8,9,9,9).iterator();
+        Iterator<Integer> actual = interleave(numbers, numbersToInterleave).iterator();
+        while(actual.hasNext()) {
+            Integer curr = actual.next();
+            assertEquals(expected.next(), curr);
+
         }
         assertFalse(expected.hasNext());
     }
