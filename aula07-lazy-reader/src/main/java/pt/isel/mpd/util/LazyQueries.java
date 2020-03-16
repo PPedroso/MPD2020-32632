@@ -175,8 +175,7 @@ public class LazyQueries {
 
             @Override
             public T next() {
-                if(interleaveFlag) interleaveFlag = false;
-                else interleaveFlag = true;
+                interleaveFlag = !interleaveFlag;
 
                 if(otherIterator.hasNext()) {
                     if (interleaveFlag && srcIterator.hasNext())
