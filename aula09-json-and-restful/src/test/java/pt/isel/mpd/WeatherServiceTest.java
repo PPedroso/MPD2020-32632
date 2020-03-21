@@ -17,7 +17,7 @@ import static pt.isel.mpd.util.LazyQueries.first;
 
 public class WeatherServiceTest {
     @Test public void testPastWeatherOfFaroCity() {
-        WeatherService service = new WeatherService(new WeatherRestful(new HttpRequest()));
+        WeatherService service = new WeatherService(new WeatherRestful(new MockRequest()));
         first(service.search("Faro"))
             .pastWeather(of(2020, 1, 1), of(2020, 1, 30))
             .forEach(out::println);

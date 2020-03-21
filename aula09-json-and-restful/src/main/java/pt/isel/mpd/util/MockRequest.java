@@ -10,7 +10,7 @@ public class MockRequest extends AbstractRequest {
             .replace('=', '_')
             .replace('?', '_')
             .substring(45,113);
-        path += ".csv";
+        path += ".json";
         return ClassLoader.getSystemClassLoader().getResourceAsStream(path);
     }
 }
