@@ -9,7 +9,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class LazyQueries {
-
     public static <T> Iterable<T> generate(Supplier<T> sup) {
         return () -> new Iterator<T>() {
             public boolean hasNext() { return true; }
@@ -105,94 +104,4 @@ public class LazyQueries {
     }
 
 
-    /*
-    * Returns a new sequence based o src where every element is unique
-    * */
-    public static <T> Iterable<T> distinct(Iterable<T> src){
-        return () -> new Iterator<T>()
-        {
-            Iterator<T> srcIterator = src.iterator();
-
-            T nextValue;
-            List<T> usedValues = new ArrayList<>();
-
-            @Override
-            public boolean hasNext() {
-                if(nextValue != null) return true;
-
-                while(srcIterator.hasNext() && usedValues.contains(nextValue = srcIterator.next()));
-
-                return nextValue != null;
-            }
-
-            @Override
-            public T next(){
-                if(hasNext()) {
-                    T returnValue = nextValue;
-                    usedValues.add(returnValue);
-                    nextValue = null;
-                    return returnValue;
-                }
-                throw new NoSuchElementException();
-            }
-        };
-    }
-
-    /*
-    * Returns a sequence with elements of src followed by elements of other
-    * */
-    public static <T> Iterable<T> concat(Iterable<T> src, Iterable<T> other) {
-        return () -> new Iterator<T>() {
-            Iterator<T> srcIterator = src.iterator();
-            Iterator<T> otherIterator = other.iterator();
-            @Override
-            public boolean hasNext() {
-                return srcIterator.hasNext() || otherIterator.hasNext();
-            }
-
-            @Override
-            public T next() {
-                if(srcIterator.hasNext()) return srcIterator.next();
-                if(otherIterator.hasNext()) return otherIterator.next();
-                throw new NoSuchElementException();
-            }
-        };
-    }
-
-    /*
-    * Returns a new with the elements of src interleaved with the elements of other
-    * */
-    public static <T> Iterable<T> interleave(Iterable<T> src, Iterable<T> other) {
-        return () -> new Iterator<T>() {
-
-            Iterator<T> srcIterator = src.iterator();
-            Iterator<T> otherIterator = other.iterator();
-            boolean interleaveFlag = false;
-            @Override
-            public boolean hasNext() {
-                return srcIterator.hasNext() || otherIterator.hasNext();
-            }
-
-            @Override
-            public T next() {
-                interleaveFlag = !interleaveFlag;
-
-                if(otherIterator.hasNext()) {
-                    if (interleaveFlag && srcIterator.hasNext())
-                        return srcIterator.next();
-                }
-                else if(srcIterator.hasNext())
-                    return srcIterator.next();
-
-                if(srcIterator.hasNext()){
-                    if(!interleaveFlag && otherIterator.hasNext())
-                        return otherIterator.next();
-                }
-                else if(otherIterator.hasNext())
-                    return otherIterator.next();
-
-                throw new NoSuchElementException();
-            }
-        };
-    }
 }
